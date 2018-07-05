@@ -52,6 +52,7 @@
 #include <impl/Kokkos_AnalyzePolicy.hpp>
 #include <Kokkos_Concepts.hpp>
 #include <iostream>
+#include <typeinfo>
 
 //----------------------------------------------------------------------------
 
