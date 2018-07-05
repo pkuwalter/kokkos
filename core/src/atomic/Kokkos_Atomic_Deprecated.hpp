@@ -512,7 +512,7 @@ void atomic_rshift( volatile T* ptr
 template <typename T>
 KOKKOS_FORCEINLINE_FUNCTION
 T volatile_load(T const volatile * ptr) noexcept
-{ return atomic_load( const_cast<const T*>(ptr) ); }
+{ return atomic_load( const_cast<T*>(ptr) ); }
 
 template <typename T>
 KOKKOS_FORCEINLINE_FUNCTION
