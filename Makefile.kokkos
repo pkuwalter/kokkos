@@ -1098,7 +1098,7 @@ endif
 # Enable 16byte compare exchange
 ifeq ($(KOKKOS_INTERNAL_COMPILER_GNU), 1)
   KOKKOS_CXXFLAGS += -mcx16
-  KOKKOS_LDFLAGS += -mcx16
+  KOKKOS_LDFLAGS += -mcx16 -latomic
 endif
 
 # Don't include Kokkos_HBWSpace.cpp if not using MEMKIND to avoid a link warning.
