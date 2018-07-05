@@ -108,6 +108,7 @@ KOKKOS_INTERNAL_COMPILER_NVCC        := $(strip $(shell export OMPI_CXX=$(OMPI_C
 KOKKOS_INTERNAL_COMPILER_CLANG       := $(call kokkos_has_string,$(KOKKOS_CXX_VERSION),clang)
 KOKKOS_INTERNAL_COMPILER_APPLE_CLANG := $(call kokkos_has_string,$(KOKKOS_CXX_VERSION),apple-darwin)
 KOKKOS_INTERNAL_COMPILER_HCC         := $(call kokkos_has_string,$(KOKKOS_CXX_VERSION),HCC)
+KOKKOS_INTERNAL_COMPILER_GNU         := $(call kokkos_has_string,$(KOKKOS_CXX_VERSION),GCC)
 
 ifeq ($(KOKKOS_INTERNAL_COMPILER_CLANG), 2)
   KOKKOS_INTERNAL_COMPILER_CLANG = 1
@@ -1092,6 +1093,12 @@ ifeq ($(KOKKOS_INTERNAL_COMPILER_CLANG), 1)
   KOKKOS_INTERNAL_GCC_TOOLCHAIN = $(KOKKOS_INTERNAL_GCC_PATH:/bin/g++=)
   KOKKOS_CXXFLAGS += --gcc-toolchain=$(KOKKOS_INTERNAL_GCC_TOOLCHAIN)
   KOKKOS_LDFLAGS += --gcc-toolchain=$(KOKKOS_INTERNAL_GCC_TOOLCHAIN)
+endif
+
+# Enable 16byte compare exchange
+ifeq ($(KOKKOS_INTERNAL_COMPILER_GNU), 1)
+  KOKKOS_CXXFLAGS += -mcx16
+  KOKKOS_LDFLAGS += -mcx16
 endif
 
 # Don't include Kokkos_HBWSpace.cpp if not using MEMKIND to avoid a link warning.
