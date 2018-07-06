@@ -54,6 +54,7 @@ TEST_F( TEST_CATEGORY , atomic_operations_float )
     ASSERT_TRUE( ( TestAtomicOperations::AtomicOperationsTestNonIntegralType< float, TEST_EXECSPACE >( start, end - i, 2 ) ) );
     ASSERT_TRUE( ( TestAtomicOperations::AtomicOperationsTestNonIntegralType< float, TEST_EXECSPACE >( start, end - i, 3 ) ) );
     ASSERT_TRUE( ( TestAtomicOperations::AtomicOperationsTestNonIntegralType< float, TEST_EXECSPACE >( start, end - i, 4 ) ) );
+    ASSERT_TRUE( ( TestAtomicOperations::AtomicOperationsTestNonIntegralType< float, TEST_EXECSPACE >( start, end - i, 5 ) ) );
   }
 }
 }

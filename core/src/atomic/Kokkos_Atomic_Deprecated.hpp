@@ -68,8 +68,9 @@ T atomic_compare_exchange( volatile T* const ptr
                          , typename std::remove_cv<T>::type desired
                          ) noexcept
 {
+  typename std::remove_cv<T>::type old_expected = expected;
   bool result = atomic_compare_exchange_strong( const_cast<T*>(ptr), expected, desired );
-  return result ? expected : desired;
+  return result ? old_expected : expected;
 }
 
 // compare_exchange which returns the type

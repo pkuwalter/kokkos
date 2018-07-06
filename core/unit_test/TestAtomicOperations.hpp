@@ -85,6 +85,81 @@ struct InitFunctor {
 };
 
 //---------------------------------------------------
+//--------------atomic_compare_exchange---------------------
+//---------------------------------------------------
+
+template< class T, class DEVICE_TYPE >
+struct CompareExchangeFunctor {
+  typedef DEVICE_TYPE execution_space;
+  typedef Kokkos::View< T, execution_space > type;
+
+  type data;
+  T i0;
+  T i1;
+  T i2;
+
+  KOKKOS_INLINE_FUNCTION
+  void operator()( int ) const {
+    T value1a = Kokkos::atomic_compare_exchange( &data(), i0, i1 );
+    T value2a = Kokkos::atomic_compare_exchange( &data(), i0, i1 );
+    T value3a = Kokkos::atomic_compare_exchange( &data(), i0, i2 );
+    T i1_tmp;
+    i1_tmp = i1==i0?i2:i1;
+    bool value1b = Kokkos::atomic_compare_exchange_strong( &data(), i1_tmp, i0 );
+    i1_tmp = i1;
+    bool value2b = Kokkos::atomic_compare_exchange_strong( &data(), i1_tmp, i0 );
+    i1_tmp = i1;
+    bool value3b = Kokkos::atomic_compare_exchange_strong( &data(), i1_tmp, i2 );
+    data() = ((value1a == i0)  ?1:0) + ((value2a == i1)      ? 2:0) + ((value3a == i1)       ? 4:0) +
+             ((value1b == true)?8:0) + ((value2b == (i1==i0))?16:0) + ((value3b == (i0==i1)) ?32:0);
+  }
+  CompareExchangeFunctor( T _i0, T _i1 ) : i0( _i0 ), i1( _i1 ), i2( _i1 + _i0 ) {}
+};
+
+template< class T, class execution_space >
+T CompareExchangeAtomic( T i0, T i1 ) {
+  struct InitFunctor< T, execution_space > f_init( i0 );
+  typename InitFunctor< T, execution_space >::type data( "Data" );
+  typename InitFunctor< T, execution_space >::h_type h_data( "HData" );
+
+  f_init.data = data;
+  Kokkos::parallel_for( 1, f_init );
+  execution_space::fence();
+
+  struct CompareExchangeFunctor< T, execution_space > f( i0, i1 );
+
+  f.data = data;
+  Kokkos::parallel_for( 1, f );
+  execution_space::fence();
+
+  Kokkos::deep_copy( h_data, data );
+  T val = h_data();
+
+  return val;
+}
+
+template< class T, class DeviceType >
+bool CompareExchangeAtomicTest( T i0, T i1 )
+{
+  T res       = CompareExchangeAtomic< T, DeviceType >( i0, i1 );
+  T resSerial = 1+2+4+8+16+32;
+
+  bool passed = true;
+
+  if ( resSerial != res ) {
+    passed = false;
+
+    std::cout << "Loop<"
+              << typeid( T ).name()
+              << ">( test = CompareExchangeAtomicTest"
+              << " FAILED : "
+              << resSerial << " != " << res
+              << std::endl;
+  }
+
+  return passed;
+}
+//---------------------------------------------------
 //--------------atomic_fetch_max---------------------
 //---------------------------------------------------
 
@@ -1051,6 +1126,7 @@ bool AtomicOperationsTestNonIntegralType( int i0, int i1, int test )
     case 2: return MinAtomicTest< T, DeviceType >( (T) i0, (T) i1 );
     case 3: return MulAtomicTest< T, DeviceType >( (T) i0, (T) i1 );
     case 4: return DivAtomicTest< T, DeviceType >( (T) i0, (T) i1 );
+    case 5: return CompareExchangeAtomicTest< T, DeviceType >( (T) i0, (T) i1 );
   }
 
   return 0;
