@@ -386,6 +386,15 @@ T atomic_min_fetch( T* ptr, typename std::remove_cv<T>::type val ) noexcept
 //------------------------------------------------------------------------------
 template <typename T>
 KOKKOS_FORCEINLINE_FUNCTION
+T atomic_mul_fetch( T* ptr, typename std::remove_cv<T>::type val ) noexcept
+{
+  return atomic_mul_fetch( ptr, val, KOKKOS_INTERNAL_DEFAULT_MEMORY_ORDER );
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_FORCEINLINE_FUNCTION
 T atomic_div_fetch( T* ptr, typename std::remove_cv<T>::type val ) noexcept
 {
   return atomic_div_fetch( ptr, val, KOKKOS_INTERNAL_DEFAULT_MEMORY_ORDER );
