@@ -640,6 +640,24 @@ atomic_fetch_add( T* ptr, typename std::remove_cv<T>::type val, std::memory_orde
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
   return Impl::atomic_fetch_operation( Impl::AddOp{}, ptr, val, order );
 }
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+typename std::enable_if< Impl::use_atomic_arithmetic_integral<T>::value, T>::type
+atomic_increment( T* ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  (void) __atomic_fetch_add( ptr, T(1), order );
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_increment( T** ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  (void) __atomic_fetch_sub( ptr, ptrdiff_t(sizeof(T)), order );
+}
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -670,6 +688,48 @@ atomic_fetch_sub( T* ptr, typename std::remove_cv<T>::type val, std::memory_orde
 {
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
   return Impl::atomic_fetch_operation( Impl::SubOp{}, ptr, val, order );
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+typename std::enable_if< Impl::use_atomic_arithmetic_integral<T>::value, void>::type
+atomic_decrement( T* ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  (void) __atomic_fetch_add( ptr, T(1), order );
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_decrement( T** ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  (void) __atomic_fetch_sub( ptr, ptrdiff_t(sizeof(T)), order );
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// fetch_max
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_fetch_max( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  return Impl::atomic_fetch_operation( Impl::MaxOp{}, ptr, val, order );
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// fetch_min
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_fetch_min( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  return Impl::atomic_fetch_operation( Impl::MinOp{}, ptr, val, order );
 }
 //------------------------------------------------------------------------------
 
@@ -875,6 +935,30 @@ atomic_sub_fetch( T* ptr, typename std::remove_cv<T>::type val, std::memory_orde
 {
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
   return Impl::atomic_operation_fetch( Impl::SubOp{}, ptr, val, order );
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// max_fetch
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_max_fetch( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  return Impl::atomic_operation_fetch( Impl::MaxOp{}, ptr, val, order );
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// min_fetch
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_min_fetch( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  return Impl::atomic_operation_fetch( Impl::MinOp{}, ptr, val, order );
 }
 //------------------------------------------------------------------------------
 

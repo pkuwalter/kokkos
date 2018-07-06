@@ -69,7 +69,7 @@ T atomic_compare_exchange( volatile T* const ptr
                          ) noexcept
 {
   bool result = atomic_compare_exchange_strong( const_cast<T*>(ptr), expected, desired );
-  return result ? desired : expected;
+  return result ? expected : desired;
 }
 
 // compare_exchange which returns the type

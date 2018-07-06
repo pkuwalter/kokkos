@@ -303,9 +303,46 @@ T* atomic_fetch_add( T** ptr, std::ptrdiff_t val, std::memory_order order ) noex
 {
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
   T tmp = *ptr;
+  *ptr = static_cast<T*>(*ptr + val);
+  return tmp;
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_fetch_add( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  T tmp = *ptr;
   *ptr = static_cast<T>(*ptr + val);
   return tmp;
 }
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T* atomic_fetch_add( T** ptr, std::ptrdiff_t val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  T tmp = *ptr;
+  *ptr = static_cast<T>(*ptr + val);
+  return tmp;
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_increment( T* ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  *ptr = static_cast<T>(*ptr + 1);
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_increment( T** ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  *ptr = static_cast<T*>(*ptr + 1);
+}
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -327,7 +364,52 @@ T* atomic_fetch_sub( T** ptr, std::ptrdiff_t val, std::memory_order order ) noex
 {
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
   T tmp = *ptr;
-  *ptr = static_cast<T>(*ptr - val);
+  *ptr = static_cast<T*>(*ptr - val);
+  return tmp;
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_decrement( T* ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  *ptr = static_cast<T>(*ptr - 1);
+}
+
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+void atomic_decrement( T** ptr, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
+  *ptr = static_cast<T*>(*ptr - 1);
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// fetch_max
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_fetch_max( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  T tmp = *ptr;
+  *ptr = tmp < val? val : tmp;
+  return tmp;
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// fetch_min
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_fetch_min( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  T tmp = *ptr;
+  *ptr = tmp > val? val : tmp;
   return tmp;
 }
 //------------------------------------------------------------------------------
@@ -532,6 +614,32 @@ T* atomic_sub_fetch( T** ptr, std::ptrdiff_t val, std::memory_order order ) noex
 {
   KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T* );
   *ptr = static_cast<T>(*ptr - val);
+  return *ptr;
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// max_fetch
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_min_fetch( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  *ptr = *ptr < val ? val : *ptr;
+  return *ptr;
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// min_fetch
+//------------------------------------------------------------------------------
+template <typename T>
+KOKKOS_INTERNAL_FORCEINLINE
+T atomic_min_fetch( T* ptr, typename std::remove_cv<T>::type val, std::memory_order order ) noexcept
+{
+  KOKKOS_INTERNAL_CHECK_VALID_ATOMIC_TYPE( T );
+  *ptr = *ptr > val ? val : *ptr;
   return *ptr;
 }
 //------------------------------------------------------------------------------
