@@ -228,7 +228,8 @@ atomic_load( T* ptr, const std::memory_order order ) noexcept
   cast_type tmp = __atomic_load_n( reinterpret_cast<cast_type*>(ptr)
                                  , static_cast<int>(order)
                                  );
-  return *reinterpret_cast<T*>(&tmp);
+  T* p = reinterpret_cast<T*>(&tmp);
+  return *p;
 }
 
 template <typename T>
@@ -338,7 +339,8 @@ atomic_exchange( T* ptr
                                      , *reinterpret_cast<cast_type*>(&val)
                                      , static_cast<int>(order)
                                      );
-  return *reinterpret_cast<T*>(&tmp);
+  T* p = reinterpret_cast<T*>(&tmp);
+  return *p;
 }
 
 template <typename T>
