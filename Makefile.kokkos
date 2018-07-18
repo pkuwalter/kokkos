@@ -2,7 +2,7 @@
 
 # Options: Cuda,ROCm,OpenMP,Pthread,Qthreads,Serial
 #KOKKOS_DEVICES ?= "OpenMP"
-KOKKOS_DEVICES ?= "Pthread"
+KOKKOS_DEVICES ?= "Cuda"
 # Options: 
 # Intel:    KNC,KNL,SNB,HSW,BDW,SKX
 # NVIDIA:   Kepler,Kepler30,Kepler32,Kepler35,Kepler37,Maxwell,Maxwell50,Maxwell52,Maxwell53,Pascal60,Pascal61,Volta70,Volta72
@@ -10,7 +10,7 @@ KOKKOS_DEVICES ?= "Pthread"
 # IBM:      BGQ,Power7,Power8,Power9
 # AMD-GPUS: Kaveri,Carrizo,Fiji,Vega
 # AMD-CPUS: AMDAVX,Ryzen,Epyc
-KOKKOS_ARCH ?= ""
+KOKKOS_ARCH ?= "Pascal60"
 # Options: yes,no
 KOKKOS_DEBUG ?= "no"
 # Options: hwloc,librt,experimental_memkind
