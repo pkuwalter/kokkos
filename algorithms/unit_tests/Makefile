@@ -1,4 +1,4 @@
-KOKKOS_PATH = ../..
+KOKKOS_PATH = /vpublic01/frog/zhengzhigao/kokkospro/kokkos
 
 GTEST_PATH = ../../TPL/gtest
 
